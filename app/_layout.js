@@ -1,26 +1,39 @@
-import {Stack} from 'expo-router'
-import {useCallback} from "react";
-import {useFonts} from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
+import React, {useEffect, useCallback} from 'react';
+import {Stack} from 'expo-router';
+import {useFonts} from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
-SplashScreen.preventAutoHideAsync();
+/*
+* Overview: The main purpose is to load custom fonts, prevent the splash screen from automatically hiding, and hide the splash screen once the fonts have been loaded.
+*/
+
+// Define the fonts to be loaded
+const FONTS = {
+    DMBold: require("../assets/fonts/DMSans-Bold.ttf"),
+    DMMedium: require("../assets/fonts/DMSans-Medium.ttf"),
+    DMRegular: require("../assets/fonts/DMSans-Regular.ttf"),
+}
 
 const Layout = () => {
-    const [fontsLoaded] = useFonts({
-        DMBold: require("../assets/fonts/DMSans-Bold.ttf"),
-        DMMedium: require("../assets/fonts/DMSans-Medium.ttf"),
-        DMRegular: require("../assets/fonts/DMSans-Regular.ttf"),
-    })
+    const [fontsLoaded] = useFonts(FONTS)
 
-    const onLayoutRootView = useCallback(async () => {
-        if (fontsLoaded) {
-            await SplashScreen.hideAsync();
-        }
-    }, [fontsLoaded])
+    useEffect(() => {
+        // Prevent the splash screen from hiding automatically
+        SplashScreen.preventAutoHideAsync();
+        // Once the fonts have loaded, hide the splash screen
+        if (fontsLoaded) SplashScreen.hideAsync();
+    }, [fontsLoaded]);
 
-    if (!fontsLoaded) return null
+    const onLayoutRootView = useCallback(() => {
+        // If the fonts are already loaded, hide the splash screen
+        if (fontsLoaded) SplashScreen.hideAsync()
+    }, [fontsLoaded]);
 
-    return <Stack onLayout={onLayoutRootView}/>
-}
+    // If the fonts haven't loaded yet, return null to prevent rendering anything
+    if (!fontsLoaded) return null;
+
+    // Otherwise, return the Stack component and attach the onLayoutRootView callback to it
+    return <Stack onLayout={onLayoutRootView}/>;
+};
 
 export default Layout;
