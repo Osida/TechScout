@@ -26,7 +26,7 @@ const PopularJobs = () => {
 
     const handleCardPress = (job) => {
         setSelectedJob(job?.job_id)
-        push(`/search/${job?.job_id}`)
+        push(`/job-details/${job?.job_id}`)
     }
 
     const renderJobList = () => {
